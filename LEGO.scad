@@ -152,7 +152,8 @@ module block(
     roadway_y=0,
     stud_rescale=1,
     dual_sided=false,
-    dual_bottom=false
+    dual_bottom=false,
+    block_center=false
     ) {
     post_wall_thickness = (brand == "lego" ? 0.85 : 1);
     wall_thickness=(brand == "lego" ? 1.45 : 1.5);
@@ -252,8 +253,13 @@ module block(
         (real_width - (real_wing_end_width)) / (real_length - (real_wing_base_length - 1))
     );
 
-   translate([-overall_length/2, -overall_width/2, 0]) // Comment to position at 0,0,0 instead of centered on X and Y.
-        union() {
+   block_translate_length = (block_center == true) ? overall_length/2 : 0;
+   block_translate_width = (block_center == true) ? overall_width/2 : 0;
+   
+   
+   translate([-block_translate_length, -block_translate_width, 0]) // Comment to position at 0,0,0 instead of centered on X and Y.
+    
+       union() {
             difference() {
                 union() {
                     /**
@@ -596,7 +602,7 @@ module block(
             }
             
             if (real_dual_sided) {
-                translate([overall_length/2, overall_width/2, block_height * height]) mirror([0,0,1]) block(
+                translate([0, 0, block_height * height]) mirror([0,0,1]) block(
                     width=real_width,
                     length=real_length,
                     height=real_height,
@@ -625,7 +631,7 @@ module block(
             }
 
             if (real_dual_bottom) {
-                translate([overall_length/2, overall_width/2, block_height * height * 2]) mirror([0,0,1]) block(
+                translate([0, 0, block_height * height * 2]) mirror([0,0,1]) block(
                     width=real_width,
                     length=real_length,
                     height=real_height,
